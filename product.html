@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SeaSell Batumi | Ad Details</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="src/shared.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style> body { font-family: 'Inter', sans-serif; } </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-indigo-50/30 text-slate-900 flex flex-col min-h-screen pb-20 md:pb-0">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 h-20 flex justify-between items-center">
+            <div class="flex items-center gap-6">
+                <button onclick="history.back()" data-i18n="back" class="text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors"></button>
+                <a href="index.html" class="text-2xl font-black text-indigo-600 tracking-tighter">SeaSell Batumi</a>
+            </div>
+            <div class="flex items-center gap-4">
+                <div id="weatherWidget" class="hidden md:block mr-4"></div>
+                <div class="relative group">
+                    <button class="px-3 py-1.5 border border-slate-300 rounded-lg text-sm font-bold hover:bg-slate-50 transition-colors flex items-center gap-1">
+                        <span id="currentLangDisplay">EN</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div class="absolute right-0 mt-2 w-24 bg-white border border-slate-200 rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                        <button onclick="window.setLanguage('en')" class="block w-full text-left px-4 py-2 hover:bg-slate-50 text-sm font-bold rounded-t-xl">EN</button>
+                        <button onclick="window.setLanguage('ua')" class="block w-full text-left px-4 py-2 hover:bg-slate-50 text-sm font-bold">UA</button>
+                        <button onclick="window.setLanguage('ka')" class="block w-full text-left px-4 py-2 hover:bg-slate-50 text-sm font-bold rounded-b-xl">KA</button>
+                    </div>
+                </div>
+                <div class="hidden md:flex items-center gap-4">
+                    <a href="profile.html" id="profileBtn" class="text-sm font-bold text-slate-600 hover:text-indigo-600 transition-colors hidden" data-i18n="nav_profile"></a>
+                    <a href="auth.html" id="authBtn" class="text-sm font-bold text-slate-600 hover:text-indigo-600 transition-colors hidden" data-i18n="nav_login"></a>
+                    <button id="logoutBtn" onclick="window.handleLogout()" class="text-sm font-bold text-slate-600 hover:text-indigo-600 transition-colors hidden" data-i18n="nav_logout"></button>
+                    <a href="auth.html" id="postAdBtn" data-i18n="nav_post_ad" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-2xl font-semibold transition-all shadow-lg shadow-indigo-100 hover:scale-105"></a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="md:hidden fixed bottom-0 w-full bg-white border-t border-slate-200 z-50 pb-safe">
+        <div class="flex justify-around items-center h-16">
+            <a href="index.html" class="flex flex-col items-center justify-center w-full h-full text-slate-500 hover:text-indigo-600">
+                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                <span class="text-[10px] font-bold" data-i18n="nav_home">Home</span>
+            </a>
+            <a href="category.html" class="flex flex-col items-center justify-center w-full h-full text-slate-500 hover:text-indigo-600">
+                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                <span class="text-[10px] font-bold" data-i18n="nav_search">Search</span>
+            </a>
+            <a href="add.html" class="flex flex-col items-center justify-center w-full h-full text-slate-500 hover:text-indigo-600">
+                <div class="bg-indigo-600 text-white p-2 rounded-full -mt-5 shadow-lg shadow-indigo-200">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                </div>
+                <span class="text-[10px] font-bold mt-1" data-i18n="nav_post_ad">Post</span>
+            </a>
+            <a href="profile.html" class="flex flex-col items-center justify-center w-full h-full text-slate-500 hover:text-indigo-600">
+                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                <span class="text-[10px] font-bold" data-i18n="nav_profile">Profile</span>
+            </a>
+        </div>
+    </nav>
+
+    <main id="productContent" class="flex-1 max-w-7xl mx-auto w-full px-4 py-12">
+        <!-- Content injected by JS -->
+        <div class="flex justify-center py-32">
+            <div class="animate-spin w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full"></div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-300 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 py-16">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
+                <div class="col-span-1 md:col-span-2">
+                    <a href="index.html" class="text-2xl font-black text-white tracking-tighter mb-4 block">SeaSell Batumi</a>
+                    <p class="text-slate-400 text-sm max-w-sm leading-relaxed" data-i18n="footer_desc"></p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white mb-6 uppercase tracking-wider text-sm" data-i18n="footer_links"></h4>
+                    <ul class="space-y-3 text-sm text-slate-400">
+                        <li><a href="about.html" class="hover:text-indigo-400 transition-colors" data-i18n="footer_about"></a></li>
+                        <li><a href="contact.html" class="hover:text-indigo-400 transition-colors" data-i18n="footer_contact"></a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white mb-6 uppercase tracking-wider text-sm" data-i18n="footer_legal"></h4>
+                    <ul class="space-y-3 text-sm text-slate-400">
+                        <li><a href="terms.html" class="hover:text-indigo-400 transition-colors" data-i18n="footer_terms"></a></li>
+                        <li><a href="privacy.html" class="hover:text-indigo-400 transition-colors" data-i18n="footer_privacy"></a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-slate-800 mt-12 pt-8 text-center md:text-left">
+                <p class="text-slate-500 text-sm">© 2026 SeaSell Batumi. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const id = new URLSearchParams(window.location.search).get('id');
+
+        async function fetchProduct() {
+            if (!id) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            if (!window.supabaseClient) return;
+
+            const { data: ad, error } = await window.supabaseClient
+                .from('ads')
+                .select('*')
+                .eq('id', id)
+                .single();
+
+            if (error || !ad) {
+                document.getElementById('productContent').innerHTML = '<div class="text-center py-32 font-bold text-slate-400">Ad not found</div>';
+                return;
+            }
+
+            const districtKey = ad.district ? 'dist_' + ad.district.replace('-', '_') : null;
+            const districtText = districtKey ? (window.translations[window.currentLang][districtKey] || ad.district) : '';
+
+            document.getElementById('productContent').innerHTML = `
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
+                    <!-- Left: Image -->
+                    <div class="space-y-6">
+                        <div class="bg-white rounded-[2.5rem] overflow-hidden border border-slate-200 shadow-sm">
+                            <img src="${ad.image_url || 'https://picsum.photos/seed/market/800/600'}" 
+                                 alt="${ad.title}" 
+                                 class="w-full h-auto object-cover"
+                                 referrerpolicy="no-referrer">
+                        </div>
+                    </div>
+
+                    <!-- Right: Info -->
+                    <div class="flex flex-col">
+                        <div class="mb-8">
+                            <div class="flex flex-wrap items-center gap-3 mb-6">
+                                <span class="bg-indigo-100 text-indigo-700 px-4 py-1.5 rounded-2xl text-xs font-black uppercase tracking-widest">
+                                    ${window.translations[window.currentLang]['cat_' + ad.category.replace('-', '_')] || ad.category}
+                                </span>
+                                <span class="bg-slate-100 text-slate-600 px-4 py-1.5 rounded-2xl text-xs font-black uppercase tracking-widest">
+                                    ${ad.condition === 'new' ? window.translations[window.currentLang].filter_new : window.translations[window.currentLang].filter_used}
+                                </span>
+                                ${districtText ? `<span class="bg-emerald-100 text-emerald-700 px-4 py-1.5 rounded-2xl text-xs font-black uppercase tracking-widest">📍 ${districtText}</span>` : ''}
+                            </div>
+                            <div class="flex justify-between items-start gap-4 mb-4">
+                                <h1 class="text-4xl font-black text-slate-900 leading-tight">${ad.title}</h1>
+                                <button onclick="window.toggleFavorite(${ad.id}, this.querySelector('svg'))" class="shrink-0 p-3 bg-white border border-slate-200 rounded-full shadow-sm hover:scale-110 transition-transform">
+                                    <svg id="productFavIcon" class="w-6 h-6 text-slate-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                                </button>
+                            </div>
+                            <div class="text-5xl font-black text-indigo-600 tracking-tighter mb-2">${window.formatPrice(ad.price, ad.currency)}</div>
+                            <div class="text-xs font-bold text-slate-400 uppercase tracking-widest">
+                                Posted on ${new Date(ad.created_at).toLocaleDateString()}
+                            </div>
+                        </div>
+
+                        <div class="mt-auto space-y-4 pt-12">
+                            <a href="https://wa.me/${ad.seller_phone ? ad.seller_phone.replace(/[^0-9]/g, '') : ''}" target="_blank" class="w-full bg-[#25D366] text-white py-5 rounded-3xl font-black text-lg hover:bg-[#1DA851] transition-all shadow-xl shadow-green-100 flex justify-center items-center gap-2">
+                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+                                ${window.translations[window.currentLang].btn_whatsapp || 'WhatsApp'}
+                            </a>
+                            <a href="https://t.me/${ad.seller_phone ? ad.seller_phone.replace(/[^0-9+]/g, '') : ''}" target="_blank" class="w-full bg-[#0088cc] text-white py-5 rounded-3xl font-black text-lg hover:bg-[#0077b3] transition-all shadow-xl shadow-blue-100 flex justify-center items-center gap-2">
+                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+                                ${window.translations[window.currentLang].btn_telegram || 'Telegram'}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-20 border-t border-slate-200 pt-12 max-w-3xl">
+                    <h3 class="text-xl font-black text-slate-900 mb-6 uppercase tracking-widest">${window.translations[window.currentLang].form_label_desc}</h3>
+                    <p class="text-lg text-slate-600 leading-relaxed whitespace-pre-line">${ad.description}</p>
+                </div>
+            `;
+
+            // Check favorite status
+            const isFav = await window.checkFavorite(ad.id);
+            if (isFav) {
+                const favIcon = document.getElementById('productFavIcon');
+                if (favIcon) {
+                    favIcon.classList.remove('text-slate-400');
+                    favIcon.classList.add('text-red-500', 'fill-current');
+                }
+            }
+        }
+
+        fetchProduct();
+    </script>
+</body>
+</html>
