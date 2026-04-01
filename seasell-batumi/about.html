@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SeaSell Batumi | About Us</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="src/shared.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style> body { font-family: 'Inter', sans-serif; } </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-indigo-50/30 text-slate-900 flex flex-col min-h-screen pb-20 md:pb-0">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 h-20 flex justify-between items-center">
+            <a href="index.html" class="text-2xl font-black text-indigo-600 tracking-tighter">SeaSell Batumi</a>
+            <div class="flex items-center gap-4">
+                <div id="weatherWidget" class="hidden md:block mr-4"></div>
+                <div class="relative group">
+                    <button class="px-3 py-1.5 border border-slate-300 rounded-lg text-sm font-bold hover:bg-slate-50 transition-colors flex items-center gap-1">
+                        <span id="currentLangDisplay">EN</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div class="absolute right-0 mt-2 w-24 bg-white border border-slate-200 rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                        <button onclick="window.setLanguage('en')" class="block w-full text-left px-4 py-2 hover:bg-slate-50 text-sm font-bold rounded-t-xl">EN</button>
+                        <button onclick="window.setLanguage('ua')" class="block w-full text-left px-4 py-2 hover:bg-slate-50 text-sm font-bold">UA</button>
+                        <button onclick="window.setLanguage('ka')" class="block w-full text-left px-4 py-2 hover:bg-slate-50 text-sm font-bold rounded-b-xl">KA</button>
+                    </div>
+                </div>
+                <div class="hidden md:flex items-center gap-4">
+                    <a href="profile.html" id="profileBtn" class="text-sm font-bold text-slate-600 hover:text-indigo-600 transition-colors hidden" data-i18n="nav_profile"></a>
+                    <a href="auth.html" id="authBtn" class="text-sm font-bold text-slate-600 hover:text-indigo-600 transition-colors hidden" data-i18n="nav_login"></a>
+                    <button id="logoutBtn" onclick="window.handleLogout()" class="text-sm font-bold text-slate-600 hover:text-indigo-600 transition-colors hidden" data-i18n="nav_logout"></button>
+                    <a href="auth.html" id="postAdBtn" data-i18n="nav_post_ad" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-2xl font-semibold transition-all shadow-lg shadow-indigo-100 hover:scale-105"></a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="md:hidden fixed bottom-0 w-full bg-white border-t border-slate-200 z-50 pb-safe">
+        <div class="flex justify-around items-center h-16">
+            <a href="index.html" class="flex flex-col items-center justify-center w-full h-full text-slate-500 hover:text-indigo-600">
+                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                <span class="text-[10px] font-bold" data-i18n="nav_home">Home</span>
+            </a>
+            <a href="category.html" class="flex flex-col items-center justify-center w-full h-full text-slate-500 hover:text-indigo-600">
+                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                <span class="text-[10px] font-bold" data-i18n="nav_search">Search</span>
+            </a>
+            <a href="add.html" class="flex flex-col items-center justify-center w-full h-full text-slate-500 hover:text-indigo-600">
+                <div class="bg-indigo-600 text-white p-2 rounded-full -mt-5 shadow-lg shadow-indigo-200">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                </div>
+                <span class="text-[10px] font-bold mt-1" data-i18n="nav_post_ad">Post</span>
+            </a>
+            <a href="profile.html" class="flex flex-col items-center justify-center w-full h-full text-slate-500 hover:text-indigo-600">
+                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                <span class="text-[10px] font-bold" data-i18n="nav_profile">Profile</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-1 max-w-4xl mx-auto px-4 py-16 w-full">
+        <div class="bg-white p-10 md:p-16 rounded-[2.5rem] border border-slate-200 shadow-sm">
+            <h1 class="text-4xl font-black text-slate-900 mb-8 tracking-tight">About SeaSell Batumi</h1>
+            <div class="prose prose-lg prose-indigo max-w-none text-slate-600 space-y-6">
+                <p class="text-xl leading-relaxed">
+                    Welcome to SeaSell Batumi, the premier marketplace designed specifically for the vibrant and diverse community of Batumi, Georgia.
+                </p>
+                <h2 class="text-2xl font-bold text-slate-900 mt-10 mb-4">Our Mission</h2>
+                <p>
+                    Our mission is to bridge the gap between locals and expats by providing a seamless, trilingual platform (English, Ukrainian, and Georgian) for buying, selling, and discovering everything you need in the city. Whether you're looking for an apartment in New Boulevard, selling electronics in Old Batumi, or offering professional services, SeaSell makes it easy and secure.
+                </p>
+                <h2 class="text-2xl font-bold text-slate-900 mt-10 mb-4">Why Choose Us?</h2>
+                <ul class="list-disc pl-6 space-y-2">
+                    <li><strong>Local Focus:</strong> Built exclusively for Batumi, featuring specific districts and local currencies (GEL/USD).</li>
+                    <li><strong>Multilingual:</strong> Breaking down language barriers to connect buyers and sellers from all backgrounds.</li>
+                    <li><strong>Direct Communication:</strong> Integrated WhatsApp and Telegram buttons for instant, hassle-free contact.</li>
+                    <li><strong>Modern & Secure:</strong> A fast, mobile-friendly interface powered by robust security.</li>
+                </ul>
+                <div class="mt-12 p-6 bg-indigo-50 rounded-2xl border border-indigo-100">
+                    <p class="font-medium text-indigo-900 mb-2">Про нас (UA)</p>
+                    <p class="text-indigo-700 text-sm">
+                        Наша місія — об'єднати місцевих жителів та експатів, надаючи зручну тримовну платформу для купівлі, продажу та пошуку всього необхідного в Батумі.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-300 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 py-16">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
+                <div class="col-span-1 md:col-span-2">
+                    <a href="index.html" class="text-2xl font-black text-white tracking-tighter mb-4 block">SeaSell Batumi</a>
+                    <p class="text-slate-400 text-sm max-w-sm leading-relaxed" data-i18n="footer_desc"></p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white mb-6 uppercase tracking-wider text-sm" data-i18n="footer_links"></h4>
+                    <ul class="space-y-3 text-sm text-slate-400">
+                        <li><a href="about.html" class="hover:text-indigo-400 transition-colors" data-i18n="footer_about"></a></li>
+                        <li><a href="contact.html" class="hover:text-indigo-400 transition-colors" data-i18n="footer_contact"></a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white mb-6 uppercase tracking-wider text-sm" data-i18n="footer_legal"></h4>
+                    <ul class="space-y-3 text-sm text-slate-400">
+                        <li><a href="terms.html" class="hover:text-indigo-400 transition-colors" data-i18n="footer_terms"></a></li>
+                        <li><a href="privacy.html" class="hover:text-indigo-400 transition-colors" data-i18n="footer_privacy"></a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-slate-800 mt-12 pt-8 text-center md:text-left">
+                <p class="text-slate-500 text-sm">© 2026 SeaSell Batumi. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            window.checkAuth();
+            window.applyTranslations();
+        });
+    </script>
+</body>
+</html>
